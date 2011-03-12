@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package com.googlecode.tcime;
+package com.googlecode.tcime.unofficial;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -35,9 +37,10 @@ public class CandidatesContainer extends LinearLayout {
   private ImageButton leftArrow;
   private ImageButton rightArrow;
   private String words;
-  private boolean highlightDefault;
-  private int currentPage;
-  private int pageCount;
+  private boolean highlightDefault = false;
+  private int currentPage = 0;
+  private int pageCount = 0;
+  private GestureDetector gestureDetector = new GestureDetector(new OnGestureListener());
 
   public CandidatesContainer(Context context, AttributeSet attrs) {
     super(context, attrs);
@@ -48,7 +51,7 @@ public class CandidatesContainer extends LinearLayout {
     super.onFinishInflate();
 
     candidateView = (CandidateView) findViewById(R.id.candidate_view);
-
+ 
     leftArrow = (ImageButton) findViewById(R.id.arrow_left);
     leftArrow.setOnClickListener(new View.OnClickListener() {
       public void onClick(View v) {
@@ -95,10 +98,40 @@ public class CandidatesContainer extends LinearLayout {
       if (highlightDefault) {
         candidateView.highlightDefault();
       }
+      // We assume that the user want to choose one word, so we highlight it.
+      highlightDefault = true;
       enableArrow(leftArrow, (page > 0) ? true : false);
       enableArrow(rightArrow, (page < pageCount - 1) ? true : false);
     }
     currentPage = page;
+  }
+  
+  /**
+   * Change to previous candidate page.
+   * 
+   * @return true if change page successfully
+   */
+  public boolean pagePrev(){
+	  int page = currentPage - 1;
+	  boolean result = !isPageEmpty(page);
+	  if(result){
+		  showPage(page);
+	  }
+	  return result;
+  }
+  
+  /**
+   * Change to next candidate page.
+   * 
+   * @return true if change page successfully
+   */
+  public boolean pageNext(){
+	  int page = currentPage + 1;
+	  boolean result = !isPageEmpty(page);
+	  if(result){
+		  showPage(page);
+	  }
+	  return result;
   }
 
   /**
@@ -122,5 +155,50 @@ public class CandidatesContainer extends LinearLayout {
     arrow.setEnabled(enabled);
     arrow.setAlpha(enabled ? ARROW_ALPHA_ENABLED : ARROW_ALPHA_DISABLED);
   }
+  
+  /**
+   * A workaround to avoid the focused CandidateView handling onTouchEvent first.
+   * We let Container to handle first.
+   * 
+   * @param event MotionEvent
+   * @return true if handled
+   */
+  @Override
+  public boolean onTouchEvent(MotionEvent event){
+	  if(gestureDetector.onTouchEvent(event)){
+		  return true;
+	  }
+	  // We can let the View to handle it then.
+	  // Before that, we should offset the x coordinate
+	  // because the coordinate is based on Container not View
+	  event.offsetLocation(-leftArrow.getMeasuredWidth(), 0);
+	  candidateView.onTouchEventReal(event);
+	  return true;
+  }
+  
+  /**
+   * A SimpleOnGestureListener that listens to the gesture of the user.
+   */
+  public class OnGestureListener extends GestureDetector.SimpleOnGestureListener { 
+	  @Override
+	  public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY){
+		  if(e1.getX() > e2.getX()){
+			  pageNext();
+		  }else{
+			  pagePrev();
+		  }
+		  return true;
+	  }
+  }
 
+  public void highlightLeft() {
+	  if(candidateView.highlightLeft() && pagePrev()){
+		  // Move the highlight to last one
+		  candidateView.changeHighlight(CandidateView.MAX_CANDIDATE_COUNT - 1);
+	  }
+  }
+
+  public void highlightRight() {
+	  if(candidateView.highlightRight()) pageNext();
+  }
 }

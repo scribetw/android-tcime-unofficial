@@ -19,7 +19,7 @@
 
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <!-- Titles for IME  -->
-    <string name="ime_name">注音倉頡輸入法</string>
+    <string name="ime_name">注音倉頡輸入法非官方版</string>
     <string name="zhuyin_ime_name">注音輸入法</string>
     <string name="cangjie_ime_name">倉頡輸入法</string>
 
@@ -34,4 +34,7 @@
     <string name="prefs_vibrate_key">prefs_vibrate</string>
     <string name="prefs_sound_title">按鍵音效</string>
     <string name="prefs_sound_key">prefs_sound</string>
+    
+    <!-- String resources -->
+    <string name="str_needsreopen">為了使用硬體鍵盤，請您先將鍵盤收起再打開</string>
 </resources>

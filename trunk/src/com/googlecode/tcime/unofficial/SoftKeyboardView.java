@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.googlecode.tcime;
+package com.googlecode.tcime.unofficial;
 
 import android.content.Context;
 import android.inputmethodservice.Keyboard;
@@ -32,6 +32,7 @@ import java.lang.reflect.Method;
 public class SoftKeyboardView extends KeyboardView {
   
   private static final int FULL_WIDTH_OFFSET = 0xFEE0;
+  private static final int UPPER_CASE_OFFSET = -32;
 
   private SoftKeyboard currentKeyboard;
   private boolean capsLock;
@@ -137,17 +138,27 @@ public class SoftKeyboardView extends KeyboardView {
     // 0xFF01~0xFF5E map to the full-width forms of the characters from
     // 0x21~0x7E. Make the long press as producing corresponding full-width
     // forms for these characters by adding the offset (0xff01 - 0x21).
-    if (currentKeyboard != null && currentKeyboard.isSymbols() &&
-        key.popupResId == 0 && key.codes[0] >= 0x21 && key.codes[0] <= 0x7E) {
-      getOnKeyboardActionListener().onKey(
-          key.codes[0] + FULL_WIDTH_OFFSET, null);
-      return true;
-    } else if (key.codes[0] == SoftKeyboard.KEYCODE_MODE_CHANGE_LETTER) {
-      getOnKeyboardActionListener().onKey(SoftKeyboard.KEYCODE_OPTIONS, null);
-      return true;
-    } else {
-      return super.onLongPress(key);
+    if (currentKeyboard != null) {
+    	// Symbol Full-width
+    	if(currentKeyboard.isSymbols() &&
+    			key.popupResId == 0 && key.codes[0] >= 0x21 && key.codes[0] <= 0x7E){
+    		getOnKeyboardActionListener().onKey(key.codes[0] + FULL_WIDTH_OFFSET, null);
+    		return true;
+    	}
+    	
+    	// English lower-case to upper-case
+    	if(currentKeyboard.isEnglish() &&
+    			key.popupResId == 0 && key.codes[0] >= 97 && key.codes[0] <= 124){
+    		getOnKeyboardActionListener().onKey(key.codes[0] + UPPER_CASE_OFFSET, null);
+    		return true;
+    	}
     }
+    // Long pressed CHANGE_LETTER as options
+    if (key.codes[0] == SoftKeyboard.KEYCODE_MODE_CHANGE_LETTER) {
+    	getOnKeyboardActionListener().onKey(SoftKeyboard.KEYCODE_OPTIONS, null);
+    	return true;
+    }
+    return super.onLongPress(key);
   }
 
 }

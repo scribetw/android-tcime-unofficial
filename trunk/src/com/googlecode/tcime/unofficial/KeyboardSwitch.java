@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.googlecode.tcime;
+package com.googlecode.tcime.unofficial;
 
 import android.content.Context;
 import android.inputmethodservice.Keyboard;
@@ -58,6 +58,8 @@ public class KeyboardSwitch {
 
   private boolean wasEnglishToSymbol;
   private int currentDisplayWidth;
+  
+  private static final int[] ICON_RES_ID = new int[]{ R.drawable.ime_en, R.drawable.ime_ch };
 
   public KeyboardSwitch(Context context, int chineseKeyboardId) {
     this.context = context;
@@ -217,5 +219,12 @@ public class KeyboardSwitch {
         toChinese();
       }
     }
+  }
+  
+  /**
+   * Return the IME status icon (English / Chinese)
+   */
+  public int getLanguageIcon(){
+	  return (currentKeyboard == null || currentKeyboard.isEnglish()) ? ICON_RES_ID[0] : ICON_RES_ID[1];
   }
 }

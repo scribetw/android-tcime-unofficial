@@ -61,7 +61,7 @@
         <Key android:codes="24339" android:keyLabel="弓"/>
         <Key android:codes="19968" android:keyLabel="一"/>
         <Key android:codes="65311" android:keyLabel="？"/>
-        <Key android:codes="65292" android:keyLabel=","
+        <Key android:codes="12290" android:keyLabel="。"
                 android:keyWidth="12%p" android:keyEdgeFlags="right"/>
     </Row>
     
@@ -69,9 +69,9 @@
         <Key android:codes="-200" android:keyLabel="@string/label_english" android:keyWidth="14%p"/>
         <Key android:codes="-2" android:keyLabel="123" android:keyWidth="14%p"
                 android:isSticky="true" android:isModifier="false"/>
-        <Key android:codes="12290" android:keyWidth="12%p"
-                android:keyIcon="@drawable/period_icon"
-                android:iconPreview="@drawable/period_popup_icon"
+        <Key android:codes="65292" android:keyWidth="12%p"
+                android:keyLabel="，"
+                android:iconPreview="@drawable/comma_popup_icon"
                 android:popupKeyboard="@xml/popup_punctuation_ch"/>
         <Key android:codes="32" android:keyIcon="@drawable/space_icon" 
                 android:iconPreview="@drawable/space_popup_icon" 

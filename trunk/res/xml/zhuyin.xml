@@ -80,9 +80,10 @@
         <Key android:codes="-200" android:keyLabel="@string/label_english" android:keyWidth="14%p"/>
         <Key android:codes="-2" android:keyLabel="123" android:keyWidth="14%p"
                 android:isSticky="true" android:isModifier="false"/>
-        <Key android:codes="12290" android:keyWidth="12%p"
-                android:keyIcon="@drawable/period_icon"
-                android:iconPreview="@drawable/period_popup_icon"
+        <!-- 65292 = Full-width Comma -->
+        <Key android:codes="65292" android:keyWidth="12%p"
+                android:keyLabel="，"
+                android:iconPreview="@drawable/comma_popup_icon"
                 android:popupKeyboard="@xml/popup_punctuation_ch"/>
         <Key android:codes="32" android:keyIcon="@drawable/space_icon" 
                 android:iconPreview="@drawable/space_popup_icon"

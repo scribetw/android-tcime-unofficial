@@ -18,11 +18,11 @@
 -->
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" 
-        package="com.googlecode.tcime"
-        android:versionCode="113"
-        android:versionName="1.0"
+        package="com.googlecode.tcime.unofficial"
+        android:versionCode="200"
+        android:versionName="2.0"
         >
-    <uses-sdk android:minSdkVersion="3"  android:targetSdkVersion="4"/>
+    <uses-sdk android:minSdkVersion="3" android:targetSdkVersion="4"/>
     <uses-permission android:name="android.permission.VIBRATE"/>
     <application android:label="@string/ime_name" android:icon="@drawable/icon">
 
