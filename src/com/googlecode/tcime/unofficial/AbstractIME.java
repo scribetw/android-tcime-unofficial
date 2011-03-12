@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.googlecode.tcime;
+package com.googlecode.tcime.unofficial;
 
 import android.content.Context;
 import android.content.res.Configuration;
@@ -25,6 +25,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
+import android.view.inputmethod.InputMethodManager;
 
 /**
  * Abstract class extended by ZhuyinIME and CangjieIME.
@@ -33,13 +34,16 @@ public abstract class AbstractIME extends InputMethodService implements
     KeyboardView.OnKeyboardActionListener, CandidateView.CandidateViewListener {
 
   protected SoftKeyboardView inputView;
-  private CandidatesContainer candidatesContainer;
-  private KeyboardSwitch keyboardSwitch;
+  protected CandidatesContainer candidatesContainer;
+  protected KeyboardSwitch keyboardSwitch;
   private Editor editor;
   private WordDictionary wordDictionary;
   private PhraseDictionary phraseDictionary;
   private SoundMotionEffect effect;
   private int orientation;
+  protected boolean hasHardKeyboard;
+  protected boolean isHardKeyboardShow;
+  private InputMethodManager iMM;
 
   protected abstract KeyboardSwitch createKeyboardSwitch(Context context);
   protected abstract Editor createEditor();
@@ -54,7 +58,11 @@ public abstract class AbstractIME extends InputMethodService implements
     phraseDictionary = new PhraseDictionary(this);
     effect = new SoundMotionEffect(this);
 
-    orientation = getResources().getConfiguration().orientation;
+    Configuration conf = getResources().getConfiguration();
+    orientation = conf.orientation;
+    hasHardKeyboard = (conf.keyboard != Configuration.KEYBOARD_NOKEYS);
+    isHardKeyboardShow = (conf.hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_NO);
+    iMM = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
     // Use the following line to debug IME service.
     //android.os.Debug.waitForDebugger();
   }
@@ -66,6 +74,7 @@ public abstract class AbstractIME extends InputMethodService implements
       escape();
       orientation = newConfig.orientation;
     }
+    isHardKeyboardShow = (newConfig.hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_NO);
     super.onConfigurationChanged(newConfig);
   }
 
@@ -183,6 +192,13 @@ public abstract class AbstractIME extends InputMethodService implements
         return true;
       }
     }
+    // Handle DPAD
+	if ((candidatesContainer != null) && candidatesContainer.isShown()) {
+		if (keyCode >= KeyEvent.KEYCODE_DPAD_UP && keyCode <= KeyEvent.KEYCODE_DPAD_CENTER){
+			onKey(keyCode, null);
+			return true;
+		}
+	}
     return super.onKeyDown(keyCode, event);
   }
 
@@ -193,8 +209,8 @@ public abstract class AbstractIME extends InputMethodService implements
       return;
     }
     if (handleOption(primaryCode) || handleCapsLock(primaryCode)
-        || handleEnter(primaryCode) || handleSpace(primaryCode)
-        || handleDelete(primaryCode) || handleComposing(primaryCode)) {
+        || handleEnter(primaryCode) || handleSpace(primaryCode) || handleDelete(primaryCode)
+        || handleDPAD(primaryCode) || handleComposing(primaryCode)) {
       return;
     }
     handleKey(primaryCode);
@@ -252,8 +268,8 @@ public abstract class AbstractIME extends InputMethodService implements
 
   private boolean handleOption(int keyCode) {
     if (keyCode == SoftKeyboard.KEYCODE_OPTIONS) {
-      // TODO: Do voice input here.
-      return true;
+    	iMM.showInputMethodPicker();
+    	return true;
     }
     return false;
   }
@@ -316,6 +332,37 @@ public abstract class AbstractIME extends InputMethodService implements
     return false;
   }
 
+  private boolean handleDPAD(int keyCode){
+	// Handle DPAD keys only
+	if (keyCode < KeyEvent.KEYCODE_DPAD_UP || keyCode > KeyEvent.KEYCODE_DPAD_CENTER){
+		return false;
+	}
+	if ((candidatesContainer != null) && candidatesContainer.isShown()) {
+		switch(keyCode){
+		// Center: Choose highlighted candidate word
+		case KeyEvent.KEYCODE_DPAD_CENTER:
+			candidatesContainer.pickHighlighted();
+			break;
+		case KeyEvent.KEYCODE_DPAD_LEFT:
+			candidatesContainer.highlightLeft();
+			break;
+		case KeyEvent.KEYCODE_DPAD_RIGHT:
+			candidatesContainer.highlightRight();
+			break;
+		// Up: Previous candidate page
+		case KeyEvent.KEYCODE_DPAD_UP:
+			candidatesContainer.pagePrev();
+			break;
+		// Down: Next candidate page
+		case KeyEvent.KEYCODE_DPAD_DOWN:
+			candidatesContainer.pageNext();
+			break;
+		}
+		return true;
+	}
+	return false;
+  }
+  
   /**
    * Handles input of SoftKeybaord key code that has not been consumed by
    * other handling-methods.

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.googlecode.tcime;
+package com.googlecode.tcime.unofficial;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -29,7 +29,8 @@ public class SoftKeyboard extends Keyboard {
 
   public static final int KEYCODE_MODE_CHANGE_LETTER = -200;
   public static final int KEYCODE_OPTIONS = -100;
-  private static final int KEYCODE_ENTER = 10;
+  public static final int KEYCODE_ENTER = 10;
+  public static final int KEYCODE_SPACE = 32;
   private static final String ESCAPE_LABEL = "Esc";
   
   private final int id;

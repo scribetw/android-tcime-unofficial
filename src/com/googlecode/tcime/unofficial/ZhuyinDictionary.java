@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.googlecode.tcime;
+package com.googlecode.tcime.unofficial;
 
 import android.content.Context;
 
@@ -50,10 +50,25 @@ public class ZhuyinDictionary extends WordDictionary {
 
     // Counts of words for each tone are stored in the array beginning.
     int tone = ZhuyinTable.getTones(pair[1].charAt(0));
-    int length = (int) data[tone];
-    if (length == 0) {
-      return "";
+    int length = 0;
+    // Default tone: show first available tone group words for selecting
+    // If first tone not found, find second tone. If second not found, find third... Unless there's one tone available.
+    if (tone == 0){
+    	for(tone = 0; tone < TONES_COUNT; tone++){
+	    	length = (int) data[tone];
+	    	// Found one tone available
+	    	if (length > 0) {
+	    		break;
+	    	}
+    	}
+    	// Now tone = one available tone (May not be first tone)
+    }else{
+    	length = (int) data[tone];
     }
+    
+    if (length == 0) {
+		return "";
+	}
 
     int start = TONES_COUNT;
     for (int i = 0;  i < tone; i++) {

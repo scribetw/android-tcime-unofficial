@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.googlecode.tcime;
+package com.googlecode.tcime.unofficial;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -86,9 +86,48 @@ public class CandidateView extends View {
    */
   public void highlightDefault() {
     if (candidates.length() > 0) {
-      highlightIndex = 0;
-      invalidate();
+      changeHighlight(0);
     }    
+  }
+  
+  /**
+   * Direct change the highlight index.
+   * 
+   * @param index a value that should be control in range by yourself
+   */
+  public void changeHighlight(int index){
+	highlightIndex = index;
+	invalidate();
+  }
+  
+  /**
+   * Move the highlight to previous one.
+   * 
+   * @return true if the index reaches the left bound (needs previous page)
+   */
+  public boolean highlightLeft(){
+	if (candidates.length() > 0 && highlightIndex > 0) {
+	  changeHighlight(highlightIndex - 1);
+	}else if(highlightIndex == 0){
+	  return true;
+	}
+	return false;
+  }
+  
+  /**
+   * Move the highlight to next one.
+   * 
+   * @return true if the index reaches the right bound (needs next page)
+   */
+  public boolean highlightRight() {
+	int max = candidates.length();
+	if (max > 0 && highlightIndex < max - 1) {
+	  changeHighlight(highlightIndex + 1);
+	  invalidate();
+	}else if(highlightIndex == max - 1){
+	  return true;
+	}
+	return false;
   }
 
   /**
@@ -107,16 +146,14 @@ public class CandidateView extends View {
   private boolean updateHighlight(int x, int y) {
     int index = getCandidateIndex(x, y);
     if (index >= 0) {
-      highlightIndex = index;
-      invalidate();
+      changeHighlight(index);
       return true;
     }
     return false;
   }
 
   private void removeHighlight() {
-    highlightIndex = -1;
-    invalidate();
+    changeHighlight(-1);
     requestLayout();
   }
 
@@ -185,12 +222,26 @@ public class CandidateView extends View {
     }
   }
 
+  /**
+   * Let the Container handle the onTouchEvent first.
+   */
   @Override
-  public boolean onTouchEvent(MotionEvent me) {
+  public boolean onTouchEvent(MotionEvent event) {
+      return super.onTouchEvent(event);
+  }
+  
+  /**
+   * A workaround to avoid the focused CandidateView handling onTouchEvent first.
+   * We let Container to handle first.
+   * 
+   * @param me MotionEvent
+   * @return true if handled
+   */
+  public boolean onTouchEventReal(MotionEvent me) {
     int action = me.getAction();
     int x = (int) me.getX();
     int y = (int) me.getY();
-
+    
     switch (action) {
       case MotionEvent.ACTION_DOWN:
       case MotionEvent.ACTION_MOVE:
