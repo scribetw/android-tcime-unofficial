@@ -66,6 +66,12 @@ public abstract class AbstractIME extends InputMethodService implements
     // Use the following line to debug IME service.
     //android.os.Debug.waitForDebugger();
   }
+  
+  @Override
+  public void onDestroy(){
+	phraseDictionary.close();
+	super.onDestroy();
+  }
 
   @Override
   public void onConfigurationChanged(Configuration newConfig) {
