@@ -19,11 +19,12 @@
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" 
         package="com.googlecode.tcime.unofficial"
-        android:versionCode="200"
-        android:versionName="2.0"
+        android:versionCode="210"
+        android:versionName="2.1"
         >
     <uses-sdk android:minSdkVersion="3" android:targetSdkVersion="4"/>
     <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.READ_USER_DICTIONARY"/>
     <application android:label="@string/ime_name" android:icon="@drawable/icon">
 
         <service android:name="ZhuyinIME" android:label="@string/zhuyin_ime_name"
