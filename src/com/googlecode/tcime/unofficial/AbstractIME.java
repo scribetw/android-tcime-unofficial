@@ -26,6 +26,7 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Toast;
 
 /**
  * Abstract class extended by ZhuyinIME and CangjieIME.
@@ -44,6 +45,7 @@ public abstract class AbstractIME extends InputMethodService implements
   protected boolean hasHardKeyboard;
   protected boolean isHardKeyboardShow;
   private InputMethodManager iMM;
+  private int toastShowedCount = 0;
 
   protected abstract KeyboardSwitch createKeyboardSwitch(Context context);
   protected abstract Editor createEditor();
@@ -349,9 +351,11 @@ public abstract class AbstractIME extends InputMethodService implements
 		case KeyEvent.KEYCODE_DPAD_CENTER:
 			candidatesContainer.pickHighlighted();
 			break;
+		// Left: Move the position to left
 		case KeyEvent.KEYCODE_DPAD_LEFT:
 			candidatesContainer.highlightLeft();
 			break;
+		// Right: Move the position to right
 		case KeyEvent.KEYCODE_DPAD_RIGHT:
 			candidatesContainer.highlightRight();
 			break;
@@ -386,5 +390,67 @@ public abstract class AbstractIME extends InputMethodService implements
   protected void escape() {
     editor.clearComposingText(getCurrentInputConnection());
     clearCandidates();
+  }
+  
+  // Hardware Keyboard related methods
+  /**
+   * Clear the keyboard meta status
+   */
+  public void clearKeyboardMetaState(){
+	int allMetaState = KeyEvent.META_ALT_ON | KeyEvent.META_ALT_LEFT_ON
+		| KeyEvent.META_ALT_RIGHT_ON | KeyEvent.META_SHIFT_ON
+		| KeyEvent.META_SHIFT_LEFT_ON
+		| KeyEvent.META_SHIFT_RIGHT_ON | KeyEvent.META_SYM_ON;
+	getCurrentInputConnection().clearMetaKeyStates(allMetaState);
+  }
+
+  /**
+   * Set the status bar icon
+   */
+  @Override
+  public void showStatusIcon(int iconResId) {
+	if (hasHardKeyboard && isHardKeyboardShow) {
+		super.showStatusIcon(iconResId);
+	} else {
+		hideStatusIcon();
+	}
+  }
+  
+  /**
+   * Check if the hard keyboard can be used. To avoid force crash.
+   * 
+   * @param sKB The soft keyboard object. To check if it is ready.
+   * @return true if hard keyboard can be used
+   */
+  public boolean checkHardKeyboardAvailable(SoftKeyboard sKB){
+	if(sKB == null || inputView == null){
+		// Prompt user to close the keyboard and reopen it to initialize
+		if(toastShowedCount < 3){
+			Toast.makeText(this, R.string.str_needsreopen, Toast.LENGTH_SHORT)
+				.show();
+			++toastShowedCount;
+		}
+		return false;
+	}
+	return true;
+  }
+  
+  /**
+   * Handles the Shift + Space key to change the input mode.
+   * 
+   * @param keyCode
+   * @param event
+   * @return true if handled
+   */
+  public boolean handleShiftSpacekey(int keyCode, KeyEvent event){
+	if (event.isShiftPressed() && keyCode == KeyEvent.KEYCODE_SPACE) {
+		// Clear all meta state
+		clearKeyboardMetaState();
+
+		onKey(SoftKeyboard.KEYCODE_MODE_CHANGE_LETTER, null);
+		showStatusIcon(keyboardSwitch.getLanguageIcon());
+		return true;
+	}
+	return false;
   }
 }

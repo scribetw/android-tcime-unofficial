@@ -32,6 +32,7 @@ public class CandidatesContainer extends LinearLayout {
 
   private static final int ARROW_ALPHA_ENABLED = 0xff;
   private static final int ARROW_ALPHA_DISABLED = 0x40;
+  private static final int FLING_DISTANCE_THRESHOLD = 40;
 
   private CandidateView candidateView;
   private ImageButton leftArrow;
@@ -182,6 +183,10 @@ public class CandidatesContainer extends LinearLayout {
   public class OnGestureListener extends GestureDetector.SimpleOnGestureListener { 
 	  @Override
 	  public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY){
+		  // The fling distance is not enough as a paging gesture
+		  if(Math.abs(e1.getX() - e2.getX()) < FLING_DISTANCE_THRESHOLD){
+			  return false;
+		  }
 		  if(e1.getX() > e2.getX()){
 			  pageNext();
 		  }else{
