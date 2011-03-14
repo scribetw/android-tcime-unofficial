@@ -22,7 +22,6 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.view.KeyEvent;
 import android.view.inputmethod.EditorInfo;
-import android.widget.Toast;
 
 /**
  * Zhuyin input method.
@@ -30,7 +29,6 @@ import android.widget.Toast;
 public class ZhuyinIME extends AbstractIME {
 	private HashMap<Integer, Integer> keyMapping;
 	private boolean isAltUsed = false;
-	private int toastShowedCount = 0;
 
   @Override
   protected KeyboardSwitch createKeyboardSwitch(Context context) {
@@ -113,26 +111,12 @@ public class ZhuyinIME extends AbstractIME {
 		if (hasHardKeyboard) {
 			// Check the status
 			SoftKeyboard sKB = (SoftKeyboard) keyboardSwitch.getCurrentKeyboard();
-			if(sKB == null || inputView == null){
-				// Prompt user to close the keyboard and reopen it to initialize
-				if(toastShowedCount < 3){
-					Toast.makeText(this, R.string.str_needsreopen, Toast.LENGTH_SHORT)
-						.show();
-					++toastShowedCount;
-				}
+			if(!checkHardKeyboardAvailable(sKB)){
 				return super.onKeyDown(keyCode, event);
 			}
 			
 			// Shift + Space
-			if (event.isShiftPressed() && keyCode == KeyEvent.KEYCODE_SPACE) {
-				// Clear all meta state
-				clearKeyboardMetaState();
-				
-				keyboardSwitch.onKey(SoftKeyboard.KEYCODE_MODE_CHANGE_LETTER);
-				// TODO: Change the IME icon
-				showStatusIcon(keyboardSwitch.getLanguageIcon());
-				return true;
-			}
+			if(handleShiftSpacekey(keyCode, event)) return true;
 			
 			// Handle HardKB event on Chinese mode only
 			if (sKB.isChinese()) {
@@ -215,22 +199,5 @@ public class ZhuyinIME extends AbstractIME {
 			}
 		}
 		return super.onKeyDown(keyCode, event);
-	}
-
-	public void clearKeyboardMetaState(){
-		int allMetaState = KeyEvent.META_ALT_ON | KeyEvent.META_ALT_LEFT_ON
-			| KeyEvent.META_ALT_RIGHT_ON | KeyEvent.META_SHIFT_ON
-	  		| KeyEvent.META_SHIFT_LEFT_ON
-	  		| KeyEvent.META_SHIFT_RIGHT_ON | KeyEvent.META_SYM_ON;
-		getCurrentInputConnection().clearMetaKeyStates(allMetaState);
-	}
-	
-	@Override
-	public void showStatusIcon(int iconResId) {
-		if (hasHardKeyboard && isHardKeyboardShow) {
-			super.showStatusIcon(iconResId);
-		} else {
-			hideStatusIcon();
-		}
 	}
 }

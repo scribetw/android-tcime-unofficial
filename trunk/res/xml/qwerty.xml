@@ -53,7 +53,7 @@
     <Row>
         <Key android:codes="-1" android:keyIcon="@drawable/shift_icon"
                 android:iconPreview="@drawable/shift_popup_icon" 
-                android:keyWidth="18%p" android:isModifier="true"
+                android:keyWidth="15%p" android:isModifier="true"
                 android:isSticky="true" android:keyEdgeFlags="left"/>
         <Key android:codes="122" android:keyLabel="z"/>
         <Key android:codes="120" android:keyLabel="x"/>
@@ -62,8 +62,9 @@
         <Key android:codes="98" android:keyLabel="b"/>
         <Key android:codes="110" android:keyLabel="n"/>
         <Key android:codes="109" android:keyLabel="m"/>
-        <Key android:codes="44" android:keyLabel="," android:keyWidth="12%p"
-                android:popupKeyboard="@xml/popup_domain" android:keyEdgeFlags="right"/>
+        <Key android:codes="-5" android:keyIcon="@drawable/delete_icon"
+                android:iconPreview="@drawable/delete_popup_icon"
+                android:keyWidth="15%p" android:isRepeatable="true" android:keyEdgeFlags="right"/>
     </Row>
     
     <Row android:rowEdgeFlags="bottom" android:keyHeight="@dimen/key_height_bottom_row" >
@@ -74,10 +75,9 @@
                 android:popupKeyboard="@xml/popup_punctuation_en"/>
         <Key android:codes="32" android:keyIcon="@drawable/space_icon" 
                 android:iconPreview="@drawable/space_popup_icon" 
-                android:keyWidth="30%p" android:isRepeatable="true"/>
-        <Key android:codes="-5" android:keyIcon="@drawable/delete_icon"
-                android:iconPreview="@drawable/delete_popup_icon"
-                android:keyWidth="15%p" android:isRepeatable="true"/>
+                android:keyWidth="33%p" android:isRepeatable="true"/>
+        <Key android:codes="44" android:keyLabel="," android:keyWidth="12%p"
+                android:popupKeyboard="@xml/popup_domain"/>
         <Key android:codes="10" android:keyIcon="@drawable/enter_icon"
                 android:iconPreview="@drawable/enter_popup_icon" 
                 android:keyWidth="15%p" android:keyEdgeFlags="right"/>

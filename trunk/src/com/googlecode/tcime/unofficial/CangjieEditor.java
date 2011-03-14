@@ -20,7 +20,7 @@ package com.googlecode.tcime.unofficial;
  * Extends Editor to compose by cangjie rules. 
  */
 public class CangjieEditor extends Editor {
-  private boolean simplified;
+  public boolean simplified;
 
   public void setSimplified(boolean simplified) {
     this.simplified = simplified;
