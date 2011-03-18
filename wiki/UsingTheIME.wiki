@@ -1,4 +1,5 @@
 #summary 設定並使用注音倉頡輸入法非官方版
+#labels Featured
 
 = Introduction =
 

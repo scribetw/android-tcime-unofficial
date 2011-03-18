@@ -1,0 +1,24 @@
+#summary 硬體鍵盤對應功能
+#labels Featured
+
+= Introduction =
+
+介紹注音倉頡輸入法非官方版的硬體鍵盤對應，具有實體鍵盤的手機 (例如 Motorola Milestone 系列) 將可以實現直接以鍵盤輸入。
+
+= Details =
+
+目前注音倉頡輸入法非官方版已能支援注音和倉頡/速成的硬體對應。
+
+  * Shift + Space key: 切換中文/英文輸入模式。可以在狀態列看到圖示 (EN / 中)。
+  * Alt: 切換倉頡/速成模式 (僅在倉頡輸入法下)。可以在狀態列看到圖示 (中 / 速)。
+
+注音鍵盤對應 (以 Motorola Milestone 為例)
+
+http://android-tcime-unofficial.googlecode.com/svn/wiki/hkb_milestone.png
+
+  * 基本上為標準的 PC 鍵盤配置
+  * 第一排字輸入方式: 搭配 Alt 鍵使用。例如ㄅ = Alt + Q。
+
+倉頡鍵盤對應
+
+  * 標準的 PC 鍵盤配置 (26 個字母按鍵)
