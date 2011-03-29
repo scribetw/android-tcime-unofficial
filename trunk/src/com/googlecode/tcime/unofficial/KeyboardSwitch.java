@@ -17,7 +17,9 @@
 package com.googlecode.tcime.unofficial;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.inputmethodservice.Keyboard;
+import android.preference.PreferenceManager;
 import android.text.InputType;
 
 /**
@@ -60,10 +62,13 @@ public class KeyboardSwitch {
   private int currentDisplayWidth;
   
   private static final int[] ICON_RES_ID = new int[]{ R.drawable.ime_en, R.drawable.ime_ch };
+  private final SharedPreferences preferences;
+  private boolean qwerty5row;
 
   public KeyboardSwitch(Context context, int chineseKeyboardId) {
     this.context = context;
     this.chineseKeyboardId = chineseKeyboardId;
+    preferences = PreferenceManager.getDefaultSharedPreferences(context);
   }
 
   /**
@@ -72,16 +77,23 @@ public class KeyboardSwitch {
    * @param displayWidth the display-width for keyboards.
    */
   public void initializeKeyboard(int displayWidth) {
+	// Check if user want the 5-row qwerty keyboard
+	qwerty5row = preferences.getBoolean(context.getString(R.string.prefs_qwerty5row_key), false);
     if ((currentKeyboard != null) && (displayWidth == currentDisplayWidth)) {
+      // Update the English keyboard setting
+      if(englishKeyboard.id != (qwerty5row ? R.xml.qwerty_5row : R.xml.qwerty)){
+        englishKeyboard = new SoftKeyboard(context, (qwerty5row ? R.xml.qwerty_5row : R.xml.qwerty));
+        if(currentKeyboard.isEnglish()) toEnglish();
+      }
       return;
     }
 
     currentDisplayWidth = displayWidth;
-    englishKeyboard = new SoftKeyboard(context, R.xml.qwerty);
     chineseKeyboard = new SoftKeyboard(context, chineseKeyboardId);
     numberSymbolKeyboard = new SoftKeyboard(context, R.xml.symbols);
     shiftSymbolKeyboard = new SoftKeyboard(context, R.xml.symbols_shift);
-
+    englishKeyboard = new SoftKeyboard(context, (qwerty5row ? R.xml.qwerty_5row : R.xml.qwerty));
+	
     if (currentKeyboard == null) {
       // Select English keyboard at the first time the input method is launched.
       toEnglish();

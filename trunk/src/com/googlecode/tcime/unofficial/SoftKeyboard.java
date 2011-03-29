@@ -33,7 +33,7 @@ public class SoftKeyboard extends Keyboard {
   public static final int KEYCODE_SPACE = 32;
   private static final String ESCAPE_LABEL = "Esc";
   
-  private final int id;
+  public final int id;
   private Key symbolKey;
   private Key enterKey;
   private Drawable enterIcon;
@@ -48,7 +48,7 @@ public class SoftKeyboard extends Keyboard {
   }
 
   public boolean isEnglish() {
-    return id == R.xml.qwerty;
+    return (id == R.xml.qwerty) || (id == R.xml.qwerty_5row);
   }
 
   public boolean isZhuyin() {

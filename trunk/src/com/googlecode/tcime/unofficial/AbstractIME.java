@@ -423,6 +423,8 @@ public abstract class AbstractIME extends InputMethodService implements
    * @return true if hard keyboard can be used
    */
   public boolean checkHardKeyboardAvailable(SoftKeyboard sKB){
+	// Hard keyboard is not showed
+	if(!isHardKeyboardShow) return false;
 	if(sKB == null || inputView == null){
 		// Prompt user to close the keyboard and reopen it to initialize
 		if(toastShowedCount < 3){
