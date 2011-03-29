@@ -34,7 +34,11 @@
     <string name="prefs_vibrate_key">prefs_vibrate</string>
     <string name="prefs_sound_title">按鍵音效</string>
     <string name="prefs_sound_key">prefs_sound</string>
+    <string name="prefs_qwerty5row_title">五排英文鍵盤</string>
+    <string name="prefs_qwerty5row_key">prefs_qwerty5row</string>
+    <string name="prefs_qwerty5row_summary">是否於英文鍵盤上增加一排數字鍵 (會壓縮到鍵盤尺寸)</string>
     
     <!-- String resources -->
     <string name="str_needsreopen">為了使用硬體鍵盤，請您先將鍵盤收起再打開</string>
+    
 </resources>

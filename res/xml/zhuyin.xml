@@ -21,7 +21,7 @@
     android:keyWidth="10%p"
     android:horizontalGap="0px"
     android:verticalGap="0px"
-    android:keyHeight="@dimen/key_height_zhuyin"
+    android:keyHeight="@dimen/key_height_5row"
     >
     
     <Row>
