@@ -266,8 +266,8 @@ public abstract class AbstractIME extends InputMethodService implements
 
   private void setCandidates(String words, boolean highlightDefault) {
     if (candidatesContainer != null) {
-      candidatesContainer.setCandidates(words, highlightDefault);
       setCandidatesViewShown((words.length() > 0) || editor.hasComposingText());
+      candidatesContainer.setCandidates(words, highlightDefault);
       if (inputView != null) {
         inputView.setEscape(candidatesContainer.isShown());
       }
@@ -374,7 +374,7 @@ public abstract class AbstractIME extends InputMethodService implements
   }
   
   /**
-   * Handles input of SoftKeybaord key code that has not been consumed by
+   * Handles input of SoftKeyboard key code that has not been consumed by
    * other handling-methods.
    */
   private void handleKey(int keyCode) {
