@@ -84,10 +84,10 @@ public class ZhuyinIME extends AbstractIME {
 		keyMapping.put(7, 0x3122);
 		keyMapping.put(44, 0x3123);
 		keyMapping.put(74, 0x3124);
-		keyMapping.put(72, 0x3124); // KEYCODE_RIGHT_BRACKET 
+		keyMapping.put(72, 0x3124); // MS1 fix: KEYCODE_RIGHT_BRACKET(?) as KEYCODE_SEMICOLON(;)
 		keyMapping.put(76, 0x3125);
 		keyMapping.put(69, 0x3126);
-		keyMapping.put(77, 0x3126); // KEYCODE_AT
+		keyMapping.put(77, 0x3126); // MS1/2 fix: KEYCODE_AT(@) as KEYCODE_MINUS(-)
 		keyMapping.put(10, 0x2C7);
 		keyMapping.put(11, 0x2CB);
 		keyMapping.put(13, 0x2CA);
@@ -162,6 +162,14 @@ public class ZhuyinIME extends AbstractIME {
 							break;
 						case KeyEvent.KEYCODE_P:
 							keyCode = KeyEvent.KEYCODE_0;
+							isTriggered = true;
+							break;
+						case KeyEvent.KEYCODE_V: // MS1/2 fix (Alt + V = -)
+							keyCode = KeyEvent.KEYCODE_MINUS;
+							isTriggered = true;
+							break;
+						case KeyEvent.KEYCODE_COMMA: // MS2 fix (Alt + , = ;)
+							keyCode = KeyEvent.KEYCODE_SEMICOLON;
 							isTriggered = true;
 							break;
 					}
