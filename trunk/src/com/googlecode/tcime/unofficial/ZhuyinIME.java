@@ -116,7 +116,10 @@ public class ZhuyinIME extends AbstractIME {
 			}
 			
 			// Shift + Space
-			if(handleShiftSpacekey(keyCode, event)) return true;
+			if(handleShiftSpacekey(keyCode, event)){
+				isAltUsed = false; // Clear Alt status
+				return true;
+			}
 			
 			// Handle HardKB event on Chinese mode only
 			if (sKB.isChinese()) {
