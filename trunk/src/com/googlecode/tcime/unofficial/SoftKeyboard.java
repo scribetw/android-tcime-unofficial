@@ -26,7 +26,6 @@ import android.inputmethodservice.Keyboard;
  * A soft keyboard definition.
  */
 public class SoftKeyboard extends Keyboard {
-
   public static final int KEYCODE_MODE_CHANGE_LETTER = -200;
   public static final int KEYCODE_OPTIONS = -100;
   public static final int KEYCODE_ENTER = 10;

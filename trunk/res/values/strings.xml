@@ -40,5 +40,19 @@
     
     <!-- String resources -->
     <string name="str_needsreopen">為了使用硬體鍵盤，請您先將鍵盤收起再打開</string>
+    <string name="str_notavailable">無法使用</string>
     
+    <!-- Menu resources -->
+    <string name="menu_barcodescan">QR 碼輸入</string>
+    <string name="menu_voiceinput">語音輸入</string>
+    <string name="menu_settings">輸入法設定</string>
+    <string name="menu_switchIME">切換輸入法</string>
+
+	<!-- Barcode Activity -->
+	<string name="barcode_missing">您需要安裝 ZXing 條碼掃描器以使用 QR 碼輸入功能。您想從 Market 上安裝嗎？</string>
+	
+	<!-- Voice Activity -->
+	<string name="voice_missing">您的裝置必須要有 Google 語音輸入支援 (需要 Android 系統支援)</string>
+	<string name="voice_speaknow">請說話</string>
+	<string name="voice_chooseone">請選擇一個</string>
 </resources>
