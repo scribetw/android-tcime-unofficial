@@ -16,13 +16,21 @@
 
 package com.googlecode.tcime.unofficial;
 
+import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.inputmethodservice.InputMethodService;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 import android.view.inputmethod.InputMethodManager;
@@ -34,6 +42,8 @@ import android.widget.Toast;
 public abstract class AbstractIME extends InputMethodService implements 
     KeyboardView.OnKeyboardActionListener, CandidateView.CandidateViewListener {
 
+  public static final String TEXT_GOT = "com.googlecode.tcime.unofficial.TEXT_GOT";
+  private String textGot = "";
   protected SoftKeyboardView inputView;
   protected CandidatesContainer candidatesContainer;
   protected KeyboardSwitch keyboardSwitch;
@@ -44,13 +54,18 @@ public abstract class AbstractIME extends InputMethodService implements
   private int orientation;
   protected boolean hasHardKeyboard;
   protected boolean isHardKeyboardShow;
-  private InputMethodManager iMM;
   private int toastShowedCount = 0;
+  private BroadcastReceiver txtReceiver;
+  private AlertDialog mOptionsDialog;
+  private static final int MENU_BARCODESCAN = 0;
+  private static final int MENU_VOICEINPUT = 1;
+  private static final int MENU_SETTINGS = 2;
+  private static final int MENU_SWITCHIME = 3;
 
   protected abstract KeyboardSwitch createKeyboardSwitch(Context context);
   protected abstract Editor createEditor();
   protected abstract WordDictionary createWordDictionary(Context context);
-  
+
   @Override
   public void onCreate() {
     super.onCreate();
@@ -64,14 +79,28 @@ public abstract class AbstractIME extends InputMethodService implements
     orientation = conf.orientation;
     hasHardKeyboard = (conf.keyboard != Configuration.KEYBOARD_NOKEYS);
     isHardKeyboardShow = (conf.hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_NO);
-    iMM = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+
+    // Create a BroadcastReceiver to catch the TEXT_GOT result
+    txtReceiver = new BroadcastReceiver(){   	
+    	@Override
+    	public void onReceive(Context arg0, Intent arg1) {
+    		textGot = arg1.getStringExtra("TEXT_RESULT");
+    		Log.d("TCIME", "Broadcast got = " + textGot);
+    		// We can't commitText() on this point. Maybe because the InputConnection is invalid now.
+    		// Instead, we store it temporarily. Later on onBindInput() we can commit it.
+    	}
+    };
+    IntentFilter iFilter = new IntentFilter();
+    iFilter.addAction(TEXT_GOT);
+    registerReceiver(txtReceiver, iFilter);
     // Use the following line to debug IME service.
     //android.os.Debug.waitForDebugger();
   }
-  
+
   @Override
   public void onDestroy(){
 	phraseDictionary.close();
+	unregisterReceiver(txtReceiver);
 	super.onDestroy();
   }
 
@@ -160,6 +189,18 @@ public abstract class AbstractIME extends InputMethodService implements
   }
 
   @Override
+  public void onBindInput(){
+	  // If we have textGot, commit it now.
+	  // This is the workaround solution to call commitText() successfully.
+	  super.onBindInput();
+	  if(!textGot.equals("")){
+		  Log.d("TCIME", "onBindInput commit textGot = " + textGot);
+		  commitText(textGot);
+		  textGot = "";
+	  }
+  }
+
+  @Override
   public void onUnbindInput() {
     editor.clearComposingText(getCurrentInputConnection());
     super.onUnbindInput();
@@ -238,11 +279,11 @@ public abstract class AbstractIME extends InputMethodService implements
   }
 
   public void swipeLeft() {
-    // no-op
+	sendDownUpKeyEvents(KeyEvent.KEYCODE_DPAD_LEFT);
   }
 
   public void swipeRight() {
-    // no-op
+	sendDownUpKeyEvents(KeyEvent.KEYCODE_DPAD_RIGHT);
   }
 
   public void swipeUp() {
@@ -276,7 +317,55 @@ public abstract class AbstractIME extends InputMethodService implements
 
   private boolean handleOption(int keyCode) {
     if (keyCode == SoftKeyboard.KEYCODE_OPTIONS) {
-    	iMM.showInputMethodPicker();
+    	// Create a Dialog menu
+    	AlertDialog.Builder builder = new AlertDialog.Builder(this)
+    		.setTitle(R.string.ime_name)
+    		.setIcon(android.R.drawable.ic_menu_preferences)
+        	.setCancelable(true)
+        	.setNegativeButton(android.R.string.cancel, null)
+        	.setItems(new CharSequence[] {
+        		getString(R.string.menu_barcodescan),
+        		getString(R.string.menu_voiceinput),
+        		getString(R.string.menu_settings),
+        		getString(R.string.menu_switchIME)
+        	},
+        	new DialogInterface.OnClickListener() {
+        		public void onClick(DialogInterface di, int position) {
+        				di.dismiss();
+        				switch (position) {
+        					case MENU_BARCODESCAN: // Scan Barcode      						
+        						Intent iBCScan = new Intent();
+        						iBCScan.setClass(AbstractIME.this, BarcodeScannerActivity.class);
+        						iBCScan.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        				        startActivity(iBCScan);
+        						break;
+        					case MENU_VOICEINPUT: // Voice Input
+        						Intent iVR = new Intent();
+        						iVR.setClass(AbstractIME.this, VoiceRecognitionActivity.class);
+        						iVR.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        				        startActivity(iVR);
+        						break;
+        					case MENU_SETTINGS: // Settings
+        						Intent iSetting = new Intent();
+        						iSetting.setClass(AbstractIME.this, ImePreferenceActivity.class);
+        						iSetting.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_HISTORY);
+        				        startActivity(iSetting);
+        						break;
+        					case MENU_SWITCHIME: // Switch IME
+        						((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE))
+        							.showInputMethodPicker();
+        						break;
+        				}
+        		}
+        });
+        mOptionsDialog = builder.create();
+        Window window = mOptionsDialog.getWindow();
+        WindowManager.LayoutParams lp = window.getAttributes();
+        lp.token = inputView.getWindowToken();
+        lp.type = WindowManager.LayoutParams.TYPE_APPLICATION_ATTACHED_DIALOG;
+        window.setAttributes(lp);
+        window.addFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
+        mOptionsDialog.show();
     	return true;
     }
     return false;

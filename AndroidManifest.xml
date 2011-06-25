@@ -19,14 +19,13 @@
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" 
         package="com.googlecode.tcime.unofficial"
-        android:versionCode="240"
-        android:versionName="2.4"
+        android:versionCode="300"
+        android:versionName="3.0"
         >
     <uses-sdk android:minSdkVersion="3" android:targetSdkVersion="4"/>
     <uses-permission android:name="android.permission.VIBRATE"/>
     <uses-permission android:name="android.permission.READ_USER_DICTIONARY"/>
     <application android:label="@string/ime_name" android:icon="@drawable/icon">
-
         <service android:name="ZhuyinIME" android:label="@string/zhuyin_ime_name"
                 android:permission="android.permission.BIND_INPUT_METHOD">
             <intent-filter>
@@ -48,5 +47,8 @@
                 <action android:name="android.intent.action.MAIN"/>
             </intent-filter>
         </activity>
+
+        <activity android:name="BarcodeScannerActivity" android:label="@string/menu_barcodescan" />
+        <activity android:name="VoiceRecognitionActivity" android:label="@string/menu_voiceinput" />
     </application>
 </manifest>

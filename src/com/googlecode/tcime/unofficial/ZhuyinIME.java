@@ -98,13 +98,13 @@ public class ZhuyinIME extends AbstractIME {
 		super.onStartInput(attribute, restarting);
 		showStatusIcon(keyboardSwitch.getLanguageIcon());
 	}
-	
+
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
 		showStatusIcon(keyboardSwitch.getLanguageIcon());
 	}
-  
+
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		// Capture the hardware keyboard
@@ -186,7 +186,7 @@ public class ZhuyinIME extends AbstractIME {
 						return true;
 					}
 				}
-				
+
 				// Simulate soft keyboard press
 				if (keyMapping.containsKey(keyCode)) {
 					onKey(keyMapping.get(keyCode), null);
