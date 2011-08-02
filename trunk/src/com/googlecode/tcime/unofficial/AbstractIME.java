@@ -57,10 +57,10 @@ public abstract class AbstractIME extends InputMethodService implements
   private int toastShowedCount = 0;
   private BroadcastReceiver txtReceiver;
   private AlertDialog mOptionsDialog;
-  private static final int MENU_BARCODESCAN = 0;
-  private static final int MENU_VOICEINPUT = 1;
-  private static final int MENU_SETTINGS = 2;
-  private static final int MENU_SWITCHIME = 3;
+  private static final int MENU_BARCODESCAN = 2; //0
+  private static final int MENU_VOICEINPUT = 3; //1
+  private static final int MENU_SETTINGS = 0; //2
+  private static final int MENU_SWITCHIME = 1; //3
 
   protected abstract KeyboardSwitch createKeyboardSwitch(Context context);
   protected abstract Editor createEditor();
@@ -324,8 +324,8 @@ public abstract class AbstractIME extends InputMethodService implements
         	.setCancelable(true)
         	.setNegativeButton(android.R.string.cancel, null)
         	.setItems(new CharSequence[] {
-        		getString(R.string.menu_barcodescan),
-        		getString(R.string.menu_voiceinput),
+        		//getString(R.string.menu_barcodescan),
+        		//getString(R.string.menu_voiceinput),
         		getString(R.string.menu_settings),
         		getString(R.string.menu_switchIME)
         	},

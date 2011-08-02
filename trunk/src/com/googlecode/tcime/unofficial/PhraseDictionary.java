@@ -133,30 +133,38 @@ public class PhraseDictionary {
 		.query(UserDictionary.Words.CONTENT_URI, QUERY_PROJECTION, "(locale IS NULL) or (locale=?)", 
 		new String[] { Locale.getDefault().toString() }, null);
 	
-	if (cursor.moveToFirst()) {
-		userDic.clear();
-		StringBuilder node;
-        while (!cursor.isAfterLast()) {
-            String word = cursor.getString(1);
-            int length = word.length();
-            if(length < 2) break; // 1 word is nonsense
-            // Recursive to build the phrase table for 3+word sentences
-            // Example: ABCD -> AB, BC, CD
-            for(int i = 0; i < length - 1; ++i){
-	            char index = word.charAt(i);
-	            if(userDic.containsKey(index)){
-	            	node = userDic.get(index);
-	            	node.append(word.substring(i + 1, i + 2));
-	            }else{
-	            	node = new StringBuilder(word.substring(i + 1, i + 2));
-	            	userDic.put(index, node);
+	try {
+		if (cursor == null)
+			throw new ClassNotFoundException("getUserDictionary failed!");
+
+		if (cursor.moveToFirst()) {
+			userDic.clear();
+			StringBuilder node;
+	        while (!cursor.isAfterLast()) {
+	            String word = cursor.getString(1);
+	            int length = word.length();
+	            if(length < 2) break; // 1 word is nonsense
+	            // Recursive to build the phrase table for 3+word sentences
+	            // Example: ABCD -> AB, BC, CD
+	            for(int i = 0; i < length - 1; ++i){
+		            char index = word.charAt(i);
+		            if(userDic.containsKey(index)){
+		            	node = userDic.get(index);
+		            	node.append(word.substring(i + 1, i + 2));
+		            }else{
+		            	node = new StringBuilder(word.substring(i + 1, i + 2));
+		            	userDic.put(index, node);
+		            }
 	            }
-            }
-            Log.d("UserDic", "Entry " + word.charAt(0) + ": " + word.substring(1));
-            cursor.moveToNext();
-        }
-    }
-    cursor.close();
-    mRequiresReload = false;
+	            Log.d("UserDic", "Entry " + word.charAt(0) + ": " + word.substring(1));
+	            cursor.moveToNext();
+	        }
+	        cursor.close();
+	    }
+	} catch(Exception e) {
+		Log.e("UserDic", e.getMessage());
+	} finally {
+		mRequiresReload = false;
+	}
   }
 }
