@@ -527,14 +527,15 @@ public abstract class AbstractIME extends InputMethodService implements
   }
   
   /**
-   * Handles the Shift + Space key to change the input mode.
+   * Handles the Language Change event (English <-> Chinese).
+   * Normally Shift + Space key, or Language Change key
    * 
    * @param keyCode
    * @param event
    * @return true if handled
    */
-  public boolean handleShiftSpacekey(int keyCode, KeyEvent event){
-	if (event.isShiftPressed() && keyCode == KeyEvent.KEYCODE_SPACE) {
+  public boolean handleLanguageChange(int keyCode, KeyEvent event){
+	if ((event.isShiftPressed() && keyCode == KeyEvent.KEYCODE_SPACE) || keyCode == 1000) { // 1000 is hard-coded by MS3
 		// Clear all meta state
 		clearKeyboardMetaState();
 
